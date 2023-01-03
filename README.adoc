@@ -1,0 +1,15 @@
+= Poesis
+
+Poesis is a tool for upgrading ports on FreeBSD.
+
+== Features
+
+* Written in C++.
+* Command-line interface.
+* Upgrade ports by respecting dependency order: if port A depends on port B, then port B is upgraded first.
+* Respect the automatic state of installed ports: if port A has been automatically installed, then port A will still be set as automatically installed after being upgraded; if port B has been set as explicitly installed, then port B will still be set as explicitly installed after being upgraded.
+
+== Planned features
+
+* Possibility to select which ports to upgrade (at the moment all outdated ports will be updated).
+* Possibility to decide the update order.
