@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unistd.h>
 #include <unordered_map>
 
 #include "Package.h"
@@ -7,11 +8,35 @@ using namespace std;
 
 string PORTSDIR;
 
-int main()
+void Usage()
 {
+    cout  << "Usage: poesis [-h] [-n]" << endl
+          << "-h      Print this help message" << endl
+          << "-n      Dry-run: only print what needs to be updated" << endl;
+}
+
+int main(int argc, char *argv[])
+{
+  bool DryRun = false;
   char Buffer[128];
   FILE *Pipe;
   unordered_map<string,Package> Outdated;
+
+  {
+    int Option;
+    while((Option = getopt(argc, argv, "hn")) != -1)
+    {
+      switch(Option)
+      {
+        case 'h':
+          Usage();
+          return 0;
+        case 'n':
+          DryRun = true;
+          break;
+      }
+    }
+  }
 
   cout  << "=== Initializing variables..."
         << endl
@@ -37,18 +62,26 @@ int main()
     exit(1);
   }
 
+  if(DryRun)
   {
-    while(fgets(Buffer,128,Pipe))
+    cout << "=== Outdated ports:" << endl;
+    while(fgets(Buffer,128,Pipe)) cout << Buffer;
+    pclose(Pipe);
+  }
+  else
+  {
     {
-      Buffer[strlen(Buffer) - 1] = 0; // remove \n
-      string PackageOrigin = Buffer;
-      cout << "=== Retrieving data for outdated port " + PackageOrigin + "..." << endl;
-      Outdated.emplace(PackageOrigin,Package(PackageOrigin,Outdated));
+      while(fgets(Buffer,128,Pipe))
+      {
+        Buffer[strlen(Buffer) - 1] = 0; // remove \n
+        string PackageOrigin = Buffer;
+        cout << "=== Retrieving data for outdated port " + PackageOrigin + "..." << endl;
+        Outdated.emplace(PackageOrigin,Package(PackageOrigin,Outdated));
+      }
     }
+    pclose(Pipe);
+    for(auto Iterator: Outdated) (Iterator.second).Update();
   }
 
-  pclose(Pipe);
-
-  for(auto Iterator: Outdated) (Iterator.second).Update();
   return 0;
 }
