@@ -62,15 +62,8 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  if(DryRun)
-  {
-    cout << "=== Outdated ports:" << endl;
-    while(fgets(Buffer,128,Pipe)) cout << Buffer;
-    pclose(Pipe);
-  }
-  else
-  {
     {
+      if(DryRun) cout << "=== Outdated ports:" << endl;
       while(fgets(Buffer,128,Pipe))
       {
         Buffer[strlen(Buffer) - 1] = 0; // remove \n
@@ -80,8 +73,11 @@ int main(int argc, char *argv[])
       }
     }
     pclose(Pipe);
-    for(auto Iterator: Outdated) (Iterator.second).Update();
-  }
+    for(auto Iterator: Outdated)
+    {
+      if(DryRun) (Iterator.second).SimulateUpdate();
+      else (Iterator.second).Update();
+    }
 
   return 0;
 }

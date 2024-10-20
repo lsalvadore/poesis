@@ -18,6 +18,7 @@ class Package
     bool Outdated = true;
   public:
     Package(string PackageOrigin, unordered_map<string,Package> &Scope);
+    void SimulateUpdate(unsigned int RecursionDegree = 0);
     void Update();
 };
 

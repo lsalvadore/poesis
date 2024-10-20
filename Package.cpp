@@ -72,6 +72,19 @@ Package::Package(string PackageOrigin, unordered_map<string,Package> &Scope)
   pclose(Pipe);
 }
 
+void Package::SimulateUpdate(unsigned int RecursionDegree)
+{
+  for(auto PkgPtr: Dependencies) PkgPtr->SimulateUpdate(RecursionDegree + 1);
+  if(Outdated)
+  {
+    string ToBeUpdated   =  string(RecursionDegree, ' ') +
+                            (string) Origin +
+                            "\n";
+    cout << ToBeUpdated;
+    Outdated = false;
+  }
+}
+
 void Package::Update()
 {
   for(auto PkgPtr: Dependencies) PkgPtr->Update();
