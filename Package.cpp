@@ -49,11 +49,9 @@ Package::Package(string PackageOrigin, unordered_map<string,Package> &Scope)
   else cout << "false." << endl;
 
   cout << "    Computing dependencies..." << endl;
-  GetDependencies =  (string) "cd " +
-                     (string) PORTSDIR +
-                     (string) "/" +
+  GetDependencies =  (string) "pkg query -e \"\%o=" +
                      (string) Origin +
-                     (string) "&& make all-depends-list | rev | cut -f 1-2 -d '/' | rev";
+                     (string) "\" \%do";
   Pipe = popen(GetDependencies.c_str(),"r");
   if(!Pipe)
   {
