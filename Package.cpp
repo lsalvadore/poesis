@@ -104,7 +104,11 @@ void Package::Update()
     {
       UpdateCommand += " INSTALLS_DEPENDS=-A";
     }
-    system(UpdateCommand.c_str());
     Outdated = false;
+    if(system(UpdateCommand.c_str()))
+    {
+      cerr << "Error while updating port " << Origin << "." << endl;
+       exit(2);
+    }
   }
 }
