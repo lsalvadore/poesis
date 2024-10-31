@@ -11,15 +11,15 @@ extern string PORTSDIR;
 
 class Package
 {
-    string Origin;
-    string Flavor;
-    list<Package *> Dependencies;
-    bool Automatic = true;
-    bool Outdated = true;
-  public:
-    Package(string PackageOrigin, unordered_map<string,Package> &Scope);
-    void SimulateUpdate(unsigned int RecursionDegree = 0);
-    void Update();
+		string Origin;
+		string Flavor;
+		list<Package *> Dependencies;
+		bool Automatic = true;
+		bool Outdated = true;
+	public:
+		Package(string PackageOrigin, unordered_map<string,Package> &Scope);
+		void SimulateUpdate(unsigned int RecursionDegree = 0);
+		void Update();
 };
 
 #endif
