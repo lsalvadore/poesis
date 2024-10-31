@@ -61,23 +61,28 @@ int main(int argc, char *argv[])
 	PORTSDIR = Buffer;
 	cout << PORTSDIR << "." << endl;
 
-	cout << "=== Retrieving list of outdated ports..." << endl;
-	Pipe = popen("pkg version -oL '=' | cut -f 1 -d ' '","r");
-	if(!Pipe)
 	{
-		cerr << "Error while retrieving the list of outdated port.";
-		exit(1);
-	}
+		cout << "=== Retrieving list of outdated ports..." << endl;
+		string RetrieveOutdatedCommand=	(string) "PORTSDIR=" +
+										(string) PORTSDIR +
+										(string) " pkg version -oL '=' | cut -f 1 -d ' '";
+		Pipe = popen(RetrieveOutdatedCommand.c_str(),"r");
+		if(!Pipe)
+		{
+			cerr << "Error while retrieving the list of outdated port.";
+			exit(1);
+		}
 
-	if(DryRun) cout << "=== Outdated ports:" << endl;
-	while(fgets(Buffer,128,Pipe))
-	{
-		Buffer[strlen(Buffer) - 1] = 0; // remove \n
-		string PackageOrigin = Buffer;
-		cout << "=== Retrieving data for outdated port " + PackageOrigin + "..." << endl;
-		Outdated.emplace(PackageOrigin,Package(PackageOrigin,Outdated));
+		if(DryRun) cout << "=== Outdated ports:" << endl;
+		while(fgets(Buffer,128,Pipe))
+		{
+			Buffer[strlen(Buffer) - 1] = 0; // remove \n
+			string PackageOrigin = Buffer;
+			cout << "=== Retrieving data for outdated port " + PackageOrigin + "..." << endl;
+			Outdated.emplace(PackageOrigin,Package(PackageOrigin,Outdated));
+		}
+		pclose(Pipe);
 	}
-	pclose(Pipe);
 
 	if(PortSpecified)
 	{
